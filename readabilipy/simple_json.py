@@ -10,7 +10,10 @@ from bs4.element import Comment, NavigableString, CData
 from .simple_tree import simple_tree_from_html_string
 from .extractors import extract_date, extract_title
 from .simplifiers import normalise_text
+<<<<<<< HEAD
 from .utils import chdir, run_npm_install
+=======
+>>>>>>> Working directory for node process passed as parameter for subprocess.check_call. Solves bug where if an exception (JSONDecodeError) occured while loading the json (line 46 of simple_json.py), the working directory is not reverted back.
 
 
 def have_node():
@@ -51,9 +54,8 @@ def simple_json_from_html_string(html, content_digests=False, node_indexes=False
 
             json_path = f_html.name + '.json'
             jsdir = os.path.join(os.path.dirname(__file__), 'javascript')
-
             with chdir(jsdir):
-                subprocess.check_call(["node", "ExtractArticle.js", "-i", html_path, "-o", json_path])
+                subprocess.check_call(["node", "ExtractArticle.js", "-i", html_path, "-o", json_path], cwd=jsdir)
 
             with open(json_path, 'r') as json_file:
                 input_json = json.load(json_file)
@@ -61,6 +63,7 @@ def simple_json_from_html_string(html, content_digests=False, node_indexes=False
             # Deleting files after processing
             os.unlink(json_path)
             os.unlink(f_html.name)
+
     else:
         input_json = {
             "title": extract_title(html),
