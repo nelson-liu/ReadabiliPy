@@ -52,7 +52,16 @@ def simple_json_from_html_string(html, content_digests=False, node_indexes=False
             json_path = f_html.name + '.json'
             jsdir = os.path.join(os.path.dirname(__file__), 'javascript')
             with chdir(jsdir):
-                subprocess.check_call(["node", "ExtractArticle.js", "-i", html_path, "-o", json_path], cwd=jsdir)
+                try:
+                    result = subprocess.run(
+                        ["node", "ExtractArticle.js", "-i", html_path, "-o", json_path],
+                        cwd=jsdir,
+                        check=True,
+                        capture_output=True,
+                        universal_newlines=True)
+                except subprocess.CalledProcessError as e:
+                    print(e.stderr)
+                    raise
 
             with open(json_path, 'r') as json_file:
                 input_json = json.load(json_file)
