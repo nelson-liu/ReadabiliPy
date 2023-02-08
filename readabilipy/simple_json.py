@@ -10,7 +10,7 @@ from bs4.element import Comment, NavigableString, CData
 from .simple_tree import simple_tree_from_html_string
 from .extractors import extract_date, extract_title
 from .simplifiers import normalise_text
-from .utils import chdir
+from .utils import chdir, run_npm_install
 
 
 def have_node():
@@ -31,6 +31,9 @@ def have_node():
     # directory, if it doesn't, it wasn't installed with Node support
     jsdir = os.path.join(os.path.dirname(__file__), 'javascript')
     node_modules = os.path.join(jsdir, 'node_modules')
+    if not os.path.exists(node_modules):
+        # Try installing node dependencies.
+        run_npm_install()
     return os.path.exists(node_modules)
 
 
@@ -84,9 +87,20 @@ def simple_json_from_html_string(html, content_digests=False, node_indexes=False
         if "content" in input_json and input_json["content"]:
             article_json["content"] = input_json["content"]
             article_json["plain_content"] = plain_content(article_json["content"], content_digests, node_indexes)
-            article_json["plain_text"] = extract_text_blocks_as_plain_text(article_json["plain_content"])
+            if use_readability:
+                article_json["plain_text"] = extract_text_blocks_js(article_json["plain_content"])
+            else:
+                article_json["plain_text"] = extract_text_blocks_as_plain_text(article_json["plain_content"])
 
     return article_json
+
+
+def extract_text_blocks_js(paragraph_html):
+    # Load article as DOM
+    soup = BeautifulSoup(paragraph_html, 'html.parser')
+    # Select all text blocks
+    text_blocks = [{"text": str(s)} for s in soup.find_all(string=True)]
+    return text_blocks
 
 
 def extract_text_blocks_as_plain_text(paragraph_html):
