@@ -10,10 +10,7 @@ from bs4.element import Comment, NavigableString, CData
 from .simple_tree import simple_tree_from_html_string
 from .extractors import extract_date, extract_title
 from .simplifiers import normalise_text
-<<<<<<< HEAD
 from .utils import chdir, run_npm_install
-=======
->>>>>>> Working directory for node process passed as parameter for subprocess.check_call. Solves bug where if an exception (JSONDecodeError) occured while loading the json (line 46 of simple_json.py), the working directory is not reverted back.
 
 
 def have_node():
