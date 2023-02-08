@@ -57,7 +57,8 @@ def simple_json_from_html_string(html, content_digests=False, node_indexes=False
                         ["node", "ExtractArticle.js", "-i", html_path, "-o", json_path],
                         cwd=jsdir,
                         check=True,
-                        capture_output=True,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
                         universal_newlines=True)
                 except subprocess.CalledProcessError as e:
                     print(e.stderr)
