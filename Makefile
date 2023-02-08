@@ -28,9 +28,8 @@ help:
 
 .PHONY: install
 
-install: ## Install for the current user using the default python command
-	python setup.py build_ext --inplace
-	python setup.py install --user
+install:
+	pip install .
 
 
 ################
